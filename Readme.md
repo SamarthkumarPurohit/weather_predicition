@@ -1,4 +1,4 @@
-# weather_prediction_system
+# weather_prediction
 Weather prediction web app using ML and real-time weather API.
 # 🌦️ Weather Prediction System
 
