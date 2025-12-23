@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Weather Prediction System</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="header">
+    <h1>☁ Weather Prediction System</h1>
+    {% if current %}
+      <div class="current-box">
+        {{ current.temp }}°C<br>
+        <small>{{ current.condition }}</small>
+      </div>
+    {% endif %}
+  </div>
+
+  <form method="POST" class="search-box">
+    <label>Search City</label>
+    <input type="text" name="city" value="{{ city }}" required>
+    <button type="submit">Predict Weather</button>
+  </form>
+
+  {% if current %}
+  <div class="card">
+    <h2>Prediction Results</h2>
+    <p>Current Temperature: <b>{{ current.temp }}°C</b></p>
+    <p>Predicted Temperature (ML): <b>{{ current.predicted }}°C</b></p>
+    <p>Humidity: {{ current.humidity }}%</p>
+  </div>
+  {% endif %}
+
+  {% if days %}
+  <div class="card">
+    <h2>5-Day Forecast</h2>
+    {% for d, v in days.items() %}
+      <div class="forecast-row">
+        <b>{{ d }}</b>
+        <span>{{ v.temp }}°C</span>
+        <span>{{ v.condition }}</span>
+      </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if analytics %}
+  <div class="card">
+    <h2>Analytics</h2>
+    <canvas id="tempChart"></canvas>
+    <canvas id="humidityChart"></canvas>
+    <canvas id="windChart"></canvas>
+  </div>
+
+  <script>
+    const labels = {{ analytics.dates | safe }};
+
+    new Chart(tempChart, {
+      type: 'line',
+      data: { labels, datasets: [{ label: 'Temperature (°C)', data: {{ analytics.temps | safe }} }] }
+    });
+
+    new Chart(humidityChart, {
+      type: 'line',
+      data: { labels, datasets: [{ label: 'Humidity (%)', data: {{ analytics.humidity | safe }} }] }
+    });
+
+    new Chart(windChart, {
+      type: 'bar',
+      data: { labels, datasets: [{ label: 'Wind Speed (km/h)', data: {{ analytics.wind | safe }} }] }
+    });
+  </script>
+  {% endif %}
+
+</div>
+
+</body>
+</html>
